@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model offer {
+  id         String     @id
+  created_at DateTime   @default(now())
+  updated_at DateTime
+  name       String
+  price      Int
+  purchase   purchase[]
+}
+
+model purchase {
+  id           String   @id
+  created_at   DateTime @default(now())
+  updated_at   DateTime
+  is_completed Boolean  @default(false)
+  user_id      String
+  offer_id     String
+  offer        offer    @relation(fields: [offer_id], references: [id])
+  user         user     @relation(fields: [user_id], references: [id])
+}
+
+model user {
+  id                      String     @id
+  created_at              DateTime   @default(now())
+  updated_at              DateTime
+  email                   String     @unique
+  name                    String
+  gender                  Gender
+  birth_date              DateTime
+  birth_time              String?
+  privacy_policy_accepted Boolean
+  is_subscribed_to_offers Boolean    @default(false)
+  phone_number            String?
+  purchase                purchase[]
+}
+
+enum Gender {
+  Male
+  Female
+}
